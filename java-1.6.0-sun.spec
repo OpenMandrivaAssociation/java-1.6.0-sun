@@ -41,7 +41,7 @@
 
 Name:		java-%{javaver}-%{origin}
 Version:	%{javaver}.%{buildver}
-Release:	%mkrel 6
+Release:	%mkrel 7
 Summary:	Java Runtime Environment for %{name}
 License:	Operating System Distributor License for Java (DLJ)
 Group:		Development/Java
@@ -141,7 +141,7 @@ Note!  This package supports browsers built with GCC 3.2 and later.
 
 %package	fonts
 Summary:	TrueType fonts for %{origin} JVMs
-Group:		System/Fonts
+Group:		System/Fonts/True type
 Requires:	%{name} = %{version}-%{release} freetype-tools
 Requires(pre):	chkfontpath
 Requires:	mkfontdir
