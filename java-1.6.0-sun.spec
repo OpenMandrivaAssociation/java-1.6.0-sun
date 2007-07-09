@@ -41,7 +41,7 @@
 
 Name:		java-%{javaver}-%{origin}
 Version:	%{javaver}.%{buildver}
-Release:	%mkrel 8
+Release:	%mkrel 9
 Summary:	Java Runtime Environment for %{name}
 License:	Operating System Distributor License for Java (DLJ)
 Group:		Development/Java
@@ -143,7 +143,6 @@ Note!  This package supports browsers built with GCC 3.2 and later.
 Summary:	TrueType fonts for %{origin} JVMs
 Group:		System/Fonts/True type
 Requires:	%{name} = %{version}-%{release} freetype-tools
-Requires(pre):	chkfontpath
 Requires:	mkfontdir
 Provides:	java-fonts = %{javaver} java-%{javaver}-fonts
 Conflicts:	java-%{javaver}-ibm-fonts java-%{javaver}-blackdown-fonts
@@ -316,6 +315,11 @@ ln -s %{_sysconfdir}/java/font.properties %{buildroot}%{_jvmdir}/%{jredir}/lib
 
 # These %ghost'd files are created properly in %post  -- Rex
 touch %{buildroot}%{fontdir}/{fonts.{alias,dir,scale,cache-1},XftCache,encodings.dir}
+
+# fontpath.d symlink
+mkdir -p %{buildroot}%_sysconfdir/X11/fontpath.d/
+ln -s ../../..%{fontdir} \
+    %{buildroot}%_sysconfdir/X11/fontpath.d/java:pri=50
 
 # make sure that plugin dir exists so update-alternatives won't fail if mozilla/firefox isn't installed
 install -d %{buildroot}%{_libdir}/mozilla/plugins
@@ -561,5 +565,6 @@ fi
 %ghost %{fontdir}/fonts.cache-1
 %ghost %{fontdir}/XftCache
 %ghost %{fontdir}/encodings.dir
+%{_sysconfdir}/X11/fontpath.d/java:pri=50
 
 
