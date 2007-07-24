@@ -1,16 +1,18 @@
 %define	origin		sun
 %define	priority	1600
 %define	javaver		1.6.0
-%define	cvsver		6
+%define	cvsver		6u2
 %define	over		%{cvsver}
-%define	buildver	0
+%define	buildver	02
 
 %define	cvsversion	%{cvsver}
 
 %define	javaws_ver	%{javaver}
 %define	javaws_version	%{cvsversion}
 
-%define	jdkbundle	jdk%{javaver}
+%define	ubuntu_svnrev	r234
+
+%define	jdkbundle	jdk%{javaver}_%{buildver}
 %define	sdklnk		java-%{javaver}-%{origin}
 %define	jrelnk		jre-%{javaver}-%{origin}
 %define	sdkdir		%{name}-%{version}
@@ -41,18 +43,17 @@
 
 Name:		java-%{javaver}-%{origin}
 Version:	%{javaver}.%{buildver}
-Release:	%mkrel 9
+Release:	%mkrel 1.0.1
 Summary:	Java Runtime Environment for %{name}
 License:	Operating System Distributor License for Java (DLJ)
 Group:		Development/Java
 URL:		http://java.sun.com/j2se/%{javaver}
-Source0:	http://download.java.net/dlj/binaries/jdk-%{cvsversion}-dlj-linux-i586.bin
-Source1:	http://download.java.net/dlj/binaries/jdk-%{cvsversion}-dlj-linux-amd64.bin
-Source3:	jdk-6-dlj-ubuntu-svn20070214.tar.bz2
-Source4:	java-sun-menu.xdg
-Source5:	java-sun-directory.xdg
-Source6:	java.sh
-Source7:	java.csh
+Source0:	http://dlc.sun.com/dlj/binaries/jdk-%{cvsversion}-dlj-linux-i586.bin
+Source1:	http://dlc.sun.com/dlj/binaries/jdk-%{cvsversion}-dlj-linux-amd64.bin
+# svn co %{ubuntu_svnrev} --username guest --password "" https://jdk-distros.dev.java.net/svn/jdk-distros/trunk/linux/ubuntu/sun-java6/debian/
+Source2:	jdk-6-dlj-ubuntu-%{ubuntu_svnrev}.tar.bz2
+Source3:	java-sun-menu.xdg
+Source4:	java-sun-directory.xdg
 Provides:	jre-%{javaver}-%{origin} = %{version}-%{release}
 Provides:	jre-%{origin} = %{version}-%{release}
 Provides:	jre-%{javaver} java-%{javaver} jre = %{javaver}
@@ -173,7 +174,7 @@ AutoReq:	0
 This package contains the JDBC/ODBC bridge driver for %{name}.
 
 %prep
-%setup -q -T -c -n %{name}-%{version} -a3
+%setup -q -T -c -n %{name}-%{version} -a2
 %ifarch i586
 sh %{SOURCE0} --accept-license --unpack
 %else
@@ -204,8 +205,8 @@ sed -i -e "s#%{jrebindir}#%{sdkbindir}#g" %{name}-jconsole.desktop
 mv %{name}-java.desktop debian/sharedmimeinfo %{jdkbundle}/jre/lib
 
 %ifnarch x86_64
-sed %{SOURCE4} -e "s#@NAME@#%{name}#g" -e "s#@VERSION@#%{over}#g" > mandriva-%{name}.menu
-sed %{SOURCE5} -e "s#@NAME@#%{name}#g" -e "s#@VERSION@#%{over}#g" > mandriva-%{name}.directory
+sed %{SOURCE3} -e "s#@NAME@#%{name}#g" -e "s#@VERSION@#%{over}#g" > mandriva-%{name}.menu
+sed %{SOURCE4} -e "s#@NAME@#%{name}#g" -e "s#@VERSION@#%{over}#g" > mandriva-%{name}.directory
 
 #sed -i -e "s#PATH=/usr/local/java/bin#PATH=%{jrebindir}#" %{jdkbundle}/bin/java-rmi.cgi
 
@@ -328,12 +329,6 @@ install -d %{buildroot}%{_libdir}/mozilla/plugins
 
 cd ..
 
-sed %{SOURCE6} -e "s#@JVM@#%{_jvmdir}/%{jredir}#g" | grep -v JDK_HOME > %{buildroot}%{_jvmdir}/%{jredir}/lib/java.sh
-sed %{SOURCE7} -e "s#@JVM@#%{_jvmdir}/%{jredir}#g" | grep -v JDK_HOME > %{buildroot}%{_jvmdir}/%{jredir}/lib/java.csh
-sed %{SOURCE6} -e "s#@JVM@#%{_jvmdir}/%{sdkdir}#g" > %{buildroot}%{_jvmdir}/%{sdkdir}/lib/java.sh
-sed %{SOURCE7} -e "s#@JVM@#%{_jvmdir}/%{sdkdir}#g" > %{buildroot}%{_jvmdir}/%{sdkdir}/lib/java.csh
-chmod 755 %{buildroot}%{_jvmdir}/%{jredir}/lib/java.*sh %{buildroot}%{_jvmdir}/%{sdkdir}/lib/java.*sh
-
 # Most of this shamelessly stolen from redhat's kdebase-2.2.2 specfile
 find %{buildroot}%{_jvmdir}/%{jredir} -type d \
 | sed 's|'%{buildroot}'|%dir |' >  %{name}-%{version}-all.files
@@ -396,11 +391,7 @@ update-alternatives --install %{_bindir}/java java %{jrebindir}/java %{priority}
 %endif
 --slave %{_datadir}/mime/packages/java.xml	java.xml		%{_jvmdir}/%{jrelnk}/lib/sharedmimeinfo \
 --slave	%{_jvmdir}/jre				jre			%{_jvmdir}/%{jrelnk} \
---slave	%{_jvmjardir}/jre			jre_exports		%{_jvmjardir}/%{jrelnk} \
---slave %{_sysconfdir}/profile.d/java_20jre.sh	java_20jre.sh		%{_jvmdir}/%{jredir}/lib/java.sh \
---slave %{_sysconfdir}/profile.d/java_20jre.csh	java_20jre.csh		%{_jvmdir}/%{jredir}/lib/java.csh
-# jre file with environment variables with has filename with higher number value than sdk to ensure
-# sdk gets processed first
+--slave	%{_jvmjardir}/jre			jre_exports		%{_jvmjardir}/%{jrelnk}
 
 update-alternatives \
 --install \
@@ -424,9 +415,7 @@ update-alternatives --install %{_bindir}/javac javac %{sdkbindir}/javac %{priori
 --slave %{_mandir}/man1/${man}.1%{_extension}	${man}.1%{_extension}	%{_mandir}/man1/${man}-%{name}.1%{_extension}; done)}%{expand:%(for man in %{jdkman}; do echo -n -e \ \\\\\\n\
 --slave %{_mandir}/ja_JP.eucJP/man1/${man}.1%{_extension}	${man}%{_extension}.ja_JP.eucJP	%{_mandir}/ja_JP.eucJP/man1/${man}-%{name}.1%{_extension}; done)} \
 --slave %{_jvmdir}/java                         java_sdk                %{_jvmdir}/%{sdklnk} \
---slave %{_jvmjardir}/java                      java_sdk_exports        %{_jvmjardir}/%{sdklnk} \
---slave %{_sysconfdir}/profile.d/java_10sdk.sh	java_10sdk.sh		%{_jvmdir}/%{sdkdir}/lib/java.sh \
---slave %{_sysconfdir}/profile.d/java_10sdk.csh	java_10sdk.csh		%{_jvmdir}/%{sdkdir}/lib/java.csh
+--slave %{_jvmjardir}/java                      java_sdk_exports        %{_jvmjardir}/%{sdklnk}
 
 update-alternatives --install %{_jvmdir}/java-%{origin} java_sdk_%{origin} %{_jvmdir}/%{sdklnk} %{priority} \
 --slave %{_jvmjardir}/java-%{origin}	java_sdk_%{origin}_exports	%{_jvmjardir}/%{sdklnk}
