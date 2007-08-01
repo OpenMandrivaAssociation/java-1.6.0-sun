@@ -43,7 +43,7 @@
 
 Name:		java-%{javaver}-%{origin}
 Version:	%{javaver}.%{buildver}
-Release:	%mkrel 1.0.2
+Release:	%mkrel 1.0.3
 Summary:	Java Runtime Environment for %{name}
 License:	Operating System Distributor License for Java (DLJ)
 Group:		Development/Java
@@ -54,6 +54,9 @@ Source1:	http://dlc.sun.com/dlj/binaries/jdk-%{cvsversion}-dlj-linux-amd64.bin
 Source2:	jdk-6-dlj-ubuntu-%{ubuntu_svnrev}.tar.bz2
 Source3:	java-sun-menu.xdg
 Source4:	java-sun-directory.xdg
+# (anssi) make javaws entry really point to javaws and create a different
+# entry for the cache viewer where to it pointed previously (#31347):
+Patch0:		jdk6-fix-javaws-desktop.patch
 Provides:	jre-%{javaver}-%{origin} = %{version}-%{release}
 Provides:	jre-%{origin} = %{version}-%{release}
 Provides:	jre-%{javaver} java-%{javaver} jre = %{javaver}
@@ -175,15 +178,14 @@ This package contains the JDBC/ODBC bridge driver for %{name}.
 
 %prep
 %setup -q -T -c -n %{name}-%{version} -a2
+%patch0 -p0
 %ifarch i586
 sh %{SOURCE0} --accept-license --unpack
 %else
 sh %{SOURCE1} --accept-license --unpack
 %endif
 cd %{jdkbundle}
-%ifnarch x86_64
-#%patch0 -p1
-%else
+%ifarch x86_64
 rm -f man/man1/javaws.1
 %endif
 
