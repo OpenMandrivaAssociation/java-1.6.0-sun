@@ -43,7 +43,7 @@
 
 Name:		java-%{javaver}-%{origin}
 Version:	%{javaver}.%{buildver}
-Release:	%mkrel 1.0.3
+Release:	%mkrel 1.0.4
 Summary:	Java Runtime Environment for %{name}
 License:	Operating System Distributor License for Java (DLJ)
 Group:		Development/Java
@@ -384,7 +384,7 @@ rm -rf %{buildroot}
 
 %post
 update-alternatives --install %{_bindir}/java java %{jrebindir}/java %{priority}%{expand:%(for bin in %{jrebin}; do echo -n -e \ \\\\\\n\
---slave %{_bindir}/${bin}			${bin}			%{sdkbindir}/${bin}; done)}%{expand:%(for man in %{jreman}; do echo -n -e \ \\\\\\n\
+--slave %{_bindir}/${bin}			${bin}			%{jrebindir}/${bin}; done)}%{expand:%(for man in %{jreman}; do echo -n -e \ \\\\\\n\
 --slave %{_mandir}/man1/${man}.1%{_extension}	${man}.1%{_extension}	%{_mandir}/man1/${man}-%{name}.1%{_extension}; done)}%{expand:%(for man in %{jreman}; do echo -n -e \ \\\\\\n\
 --slave %{_mandir}/ja_JP.eucJP/man1/${man}.1%{_extension}	${man}%{_extension}.ja_JP.eucJP	%{_mandir}/ja_JP.eucJP/man1/${man}-%{name}.1%{_extension}; done)} \
 %ifnarch x86_64
