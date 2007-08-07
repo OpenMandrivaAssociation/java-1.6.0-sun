@@ -64,7 +64,7 @@ Provides:	java-%{origin} = %{version}-%{release}
 Provides:	java = %{javaver}
 Requires:	update-alternatives
 Requires:	jpackage-utils >= 0:1.5.38
-BuildArch:	i586 x86_64
+ExclusiveArch:	%{ix86} x86_64
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:	jpackage-utils >= 0:1.5.38 sed desktop-file-utils
 %ifnarch x86_64
