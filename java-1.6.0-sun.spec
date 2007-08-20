@@ -43,7 +43,7 @@
 
 Name:		java-%{javaver}-%{origin}
 Version:	%{javaver}.%{buildver}
-Release:	%mkrel 1.0.5
+Release:	%mkrel 1.0.6
 Summary:	Java Runtime Environment for %{name}
 License:	Operating System Distributor License for Java (DLJ)
 Group:		Development/Java
@@ -52,8 +52,6 @@ Source0:	http://dlc.sun.com/dlj/binaries/jdk-%{cvsversion}-dlj-linux-i586.bin
 Source1:	http://dlc.sun.com/dlj/binaries/jdk-%{cvsversion}-dlj-linux-amd64.bin
 # svn co %{ubuntu_svnrev} --username guest --password "" https://jdk-distros.dev.java.net/svn/jdk-distros/trunk/linux/ubuntu/sun-java6/debian/
 Source2:	jdk-6-dlj-ubuntu-%{ubuntu_svnrev}.tar.bz2
-Source3:	java-sun-menu.xdg
-Source4:	java-sun-directory.xdg
 # (anssi) make javaws entry really point to javaws and create a different
 # entry for the cache viewer where to it pointed previously (#31347):
 Patch0:		jdk6-fix-javaws-desktop.patch
@@ -207,9 +205,6 @@ sed -i -e "s#%{jrebindir}#%{sdkbindir}#g" %{name}-jconsole.desktop
 mv %{name}-java.desktop debian/sharedmimeinfo %{jdkbundle}/jre/lib
 
 %ifnarch x86_64
-sed %{SOURCE3} -e "s#@NAME@#%{name}#g" -e "s#@VERSION@#%{over}#g" > mandriva-%{name}.menu
-sed %{SOURCE4} -e "s#@NAME@#%{name}#g" -e "s#@VERSION@#%{over}#g" > mandriva-%{name}.directory
-
 #sed -i -e "s#PATH=/usr/local/java/bin#PATH=%{jrebindir}#" %{jdkbundle}/bin/java-rmi.cgi
 
 # fix up (create new) HtmlConverter
@@ -281,9 +276,6 @@ popd
 %ifnarch x86_64
 
 install -m644 jre/plugin/desktop/sun_java.png -D %{buildroot}%{_datadir}/pixmaps/%{name}.png
-
-install -m644 ../mandriva-%{name}.menu -D %{buildroot}%{_sysconfdir}/xdg/menus/applications-merged/mandriva-%{name}.menu
-install -m644 ../mandriva-%{name}.directory -D %{buildroot}%{_datadir}/desktop-directories/mandriva-%{name}.directory
 
 for desktop in ../*.desktop; do
 	desktop-file-install	--vendor="" \
@@ -503,8 +495,6 @@ fi
 %ifnarch x86_64
 %{_datadir}/applications/*.desktop
 %exclude %{_datadir}/applications/%{name}-jconsole.desktop
-%{_sysconfdir}/xdg/menus/applications-merged/mandriva-%{name}.menu
-%{_datadir}/desktop-directories/mandriva-%{name}.directory
 %{_datadir}/pixmaps/*.png
 %endif
 %dir %{_datadir}/mime
