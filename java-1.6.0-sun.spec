@@ -305,6 +305,7 @@ cp -a demo %{buildroot}%{_datadir}/%{name}
 ln -s %{_datadir}/%{name}/demo %{buildroot}%{_jvmdir}
 
 ### font handling
+# (anssi) This dir is used with java-1.5.0-sun as well, do not modify to avoid conflicts
 install -d %{buildroot}%{fontdir}
 #mv %{buildroot}%{_jvmdir}/%{jredir}/lib/fonts %{buildroot}%{fontdir}
 #ln -s %{fontdir} %{buildroot}%{_jvmdir}/%{jredir}/lib/fonts
