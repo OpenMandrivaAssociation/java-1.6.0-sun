@@ -201,7 +201,7 @@ for xdgmenu in debian/*desktop.in; do
 	-e "s#@vendor@#Sun#g" \
 	-e "s#@RELEASE@#%{javaver}#g" \
 	-e "s#/@basedir@/bin#%{jrebindir}#g" \
-	-e "s#Icon=.*#Icon=%{name}.png#g" \
+	-e "s#Icon=.*#Icon=%{name}#g" \
 	-e "s#@ia32txt@##g" \
 	> %{name}-`echo $xdgmenu|cut -d- -f2|cut -d. -f1-2`
 done
