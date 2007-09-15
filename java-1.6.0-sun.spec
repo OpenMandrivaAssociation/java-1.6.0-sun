@@ -43,7 +43,7 @@
 
 Name:		java-%{javaver}-%{origin}
 Version:	%{javaver}.%{buildver}
-Release:	%mkrel 1.0.7
+Release:	%mkrel 1.0.8
 Summary:	Java Runtime Environment for %{name}
 License:	Operating System Distributor License for Java (DLJ)
 Group:		Development/Java
@@ -105,6 +105,7 @@ Provides:       java-%{javaver}-devel java-devel = %{javaver}
 Requires:       %{name} = %{version}-%{release}
 Obsoletes:	jdk < %{version}-%{release}
 Obsoletes:	jdk2 < %{version}-%{release}
+Obsoletes:	j2sdk < %{version}-%{release}
 
 %description	devel
 The Java(tm) Development Kit (JDK(tm)) contains the software and tools that
