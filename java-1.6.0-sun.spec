@@ -87,6 +87,8 @@ Requires:	%{name}-plugin = %{version}-%{release}
 Requires:	%{name}-alsa = %{version}-%{release}
 Requires:	%{name}-jdbc = %{version}-%{release}
 Requires:	%{name}-fonts = %{version}-%{release}
+Obsoletes:	j2re < %{version}-%{release}
+Obsoletes:	jre2 < %{version}-%{release}
 
 %description
 This package contains the Java Runtime Environment for %{name}
@@ -101,6 +103,8 @@ Provides:	java-sdk-%{javaver} java-sdk = %{javaver} jdk = %{javaver}
 Provides:	java-devel-%{origin} = %{version}-%{release}
 Provides:       java-%{javaver}-devel java-devel = %{javaver}
 Requires:       %{name} = %{version}-%{release}
+Obsoletes:	jdk < %{version}-%{release}
+Obsoletes:	jdk2 < %{version}-%{release}
 
 %description	devel
 The Java(tm) Development Kit (JDK(tm)) contains the software and tools that
