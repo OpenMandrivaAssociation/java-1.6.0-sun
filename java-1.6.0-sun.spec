@@ -403,6 +403,12 @@ update-alternatives \
 	jce_%{javaver}_%{origin}_us_export_policy \
 	%{_jvmprivdir}/%{name}/jce/vanilla/US_export_policy.jar
 
+update-alternatives --install %{_jvmdir}/jre-%{origin} jre_%{origin} %{_jvmdir}/%{jrelnk} %{priority} \
+--slave %{_jvmjardir}/jre-%{origin}	jre_%{origin}_exports	%{_jvmjardir}/%{jrelnk}
+
+update-alternatives --install %{_jvmdir}/jre-%{javaver} jre_%{javaver} %{_jvmdir}/%{jrelnk} %{priority} \
+--slave %{_jvmjardir}/jre-%{javaver}	jre_%{javaver}_exports      %{_jvmjardir}/%{jrelnk}
+
 %ifnarch x86_64
 %{update_desktop_database}
 %endif
