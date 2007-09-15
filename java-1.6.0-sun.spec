@@ -87,6 +87,8 @@ Requires:	%{name}-plugin = %{version}-%{release}
 Requires:	%{name}-alsa = %{version}-%{release}
 Requires:	%{name}-jdbc = %{version}-%{release}
 Requires:	%{name}-fonts = %{version}-%{release}
+Provides:	j2re = %{version}-%{release}
+Provides:	jre2 = %{version}-%{release}
 Obsoletes:	j2re < %{version}-%{release}
 Obsoletes:	jre2 < %{version}-%{release}
 
@@ -103,6 +105,9 @@ Provides:	java-sdk-%{javaver} java-sdk = %{javaver} jdk = %{javaver}
 Provides:	java-devel-%{origin} = %{version}-%{release}
 Provides:       java-%{javaver}-devel java-devel = %{javaver}
 Requires:       %{name} = %{version}-%{release}
+Provides:	jdk = %{version}-%{release}
+Provides:	jdk2 = %{version}-%{release}
+Provides:	j2sdk = %{version}-%{release}
 Obsoletes:	jdk < %{version}-%{release}
 Obsoletes:	jdk2 < %{version}-%{release}
 Obsoletes:	j2sdk < %{version}-%{release}
