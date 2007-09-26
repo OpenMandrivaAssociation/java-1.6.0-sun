@@ -43,7 +43,7 @@
 
 Name:		java-%{javaver}-%{origin}
 Version:	%{javaver}.%{buildver}
-Release:	%mkrel 1.0.8
+Release:	%mkrel 1.0.9
 Summary:	Java Runtime Environment for %{name}
 License:	Operating System Distributor License for Java (DLJ)
 Group:		Development/Java
@@ -60,6 +60,7 @@ Provides:	jre-%{origin} = %{version}-%{release}
 Provides:	jre-%{javaver} java-%{javaver} jre = %{javaver}
 Provides:	java-%{origin} = %{version}-%{release}
 Provides:	java = %{javaver}
+Provides:	%{_lib}%{name} = %{version}-%{release}
 Requires:	update-alternatives
 Requires:	jpackage-utils >= 0:1.5.38
 ExclusiveArch:	%{ix86} x86_64
@@ -82,10 +83,10 @@ Provides:	javaws-menu
 %endif
 # DLJ license requires these to be part of the JRE
 %ifnarch x86_64
-Requires:	%{name}-plugin = %{version}-%{release}
+Requires:	%{_lib}%{name}-plugin = %{version}-%{release}
 %endif
-Requires:	%{name}-alsa = %{version}-%{release}
-Requires:	%{name}-jdbc = %{version}-%{release}
+Requires:	%{_lib}%{name}-alsa = %{version}-%{release}
+Requires:	%{_lib}%{name}-jdbc = %{version}-%{release}
 Requires:	%{name}-fonts = %{version}-%{release}
 Provides:	j2re = %{version}-%{release}
 Provides:	jre2 = %{version}-%{release}
@@ -104,7 +105,7 @@ Provides:	java-sdk-%{origin} = %{version}-%{release}
 Provides:	java-sdk-%{javaver} java-sdk = %{javaver} jdk = %{javaver}
 Provides:	java-devel-%{origin} = %{version}-%{release}
 Provides:       java-%{javaver}-devel java-devel = %{javaver}
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{_lib}%{name} = %{version}-%{release}
 Provides:	jdk = %{version}-%{release}
 Provides:	jdk2 = %{version}-%{release}
 Provides:	j2sdk = %{version}-%{release}
@@ -128,7 +129,7 @@ This package contains source files for %{name}.
 %package	demo
 Summary:	Demonstration files for %{name}
 Group:		Development/Java
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{_lib}%{name} = %{version}-%{release}
 # Without this a requirement on libjava_crw_demo_g.so is added which
 # is not in the main java package. libjava_crw_demo.so is but not "_g".
 AutoReq:        0
@@ -140,8 +141,9 @@ This package contains demonstration files for %{name}.
 %package	plugin
 Summary:	Browser plugin files for %{name}
 Group:		Networking/WWW
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{_lib}%{name} = %{version}-%{release}
 Provides:	java-plugin = %{javaver} java-%{javaver}-plugin = %{version}
+Provides:	%{_lib}%{name}-plugin = %{version}-%{release}
 Conflicts:	java-%{javaver}-ibm-plugin java-%{javaver}-blackdown-plugin
 Conflicts:	java-%{javaver}-bea-plugin
 Obsoletes:	java-1.3.1-plugin java-1.4.0-plugin java-1.4.1-plugin java-1.4.2-plugin
@@ -169,7 +171,8 @@ This package contains the TrueType fonts for %{origin} JVMs.
 %package	alsa
 Summary:	ALSA support for %{name}
 Group:		Development/Java
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{_lib}%{name} = %{version}-%{release}
+Provides:	%{_lib}%{name}-alsa = %{version}-%{release}
 
 %description	alsa
 This package contains Advanced Linux Sound Architecture (ALSA) support
@@ -178,7 +181,8 @@ libraries for %{name}.
 %package	jdbc
 Summary:	JDBC/ODBC bridge driver for %{name}
 Group:		Development/Java
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{_lib}%{name} = %{version}-%{release}
+Provides:	%{_lib}%{name}-jdbc = %{version}-%{release}
 AutoReq:	0
 
 %description	jdbc
