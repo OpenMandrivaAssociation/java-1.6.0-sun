@@ -1,16 +1,16 @@
 %define	origin		sun
 %define	priority	1600
 %define	javaver		1.6.0
-%define	cvsver		6u2
+%define	cvsver		6u3
 %define	over		%{cvsver}
-%define	buildver	02
+%define	buildver	03
 
 %define	cvsversion	%{cvsver}
 
 %define	javaws_ver	%{javaver}
 %define	javaws_version	%{cvsversion}
 
-%define	ubuntu_svnrev	r234
+%define	ubuntu_svnrev	r258
 
 %define	jdkbundle	jdk%{javaver}_%{buildver}
 %define	sdklnk		java-%{javaver}-%{origin}
@@ -43,14 +43,14 @@
 
 Name:		java-%{javaver}-%{origin}
 Version:	%{javaver}.%{buildver}
-Release:	%mkrel 1.0.9
+Release:	%mkrel 1.0.1
 Summary:	Java Runtime Environment for %{name}
 License:	Operating System Distributor License for Java (DLJ)
 Group:		Development/Java
 URL:		http://java.sun.com/j2se/%{javaver}
 Source0:	http://dlc.sun.com/dlj/binaries/jdk-%{cvsversion}-dlj-linux-i586.bin
 Source1:	http://dlc.sun.com/dlj/binaries/jdk-%{cvsversion}-dlj-linux-amd64.bin
-# svn co %{ubuntu_svnrev} --username guest --password "" https://jdk-distros.dev.java.net/svn/jdk-distros/trunk/linux/ubuntu/sun-java6/debian/
+# svn co -%{ubuntu_svnrev} --username guest --password "" https://jdk-distros.dev.java.net/svn/jdk-distros/trunk/linux/ubuntu/sun-java6/debian/
 Source2:	jdk-6-dlj-ubuntu-%{ubuntu_svnrev}.tar.bz2
 # (anssi) make javaws entry really point to javaws and create a different
 # entry for the cache viewer where to it pointed previously (#31347):
