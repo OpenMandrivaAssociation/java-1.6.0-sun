@@ -43,7 +43,7 @@
 
 Name:           java-%{javaver}-%{origin}
 Version:        %{javaver}.%{buildver}
-Release:        %mkrel 1.0.1
+Release:        %mkrel 1.0.2
 Summary:        Java Runtime Environment for %{name}
 License:        Operating System Distributor License for Java (DLJ)
 Group:          Development/Java
@@ -495,6 +495,29 @@ fi
 if [ -d %{fontdir} ]; then
 mkfontscale %{fontdir}
 mkfontdir %{fontdir}
+fi
+
+
+# (Anssi 02/2008) The previous versions of this package were buggy and did
+# not always remove the old alternative, causing it to be left enabled,
+# leading to broken symlinks.
+%posttrans
+if ! [ -e %{_bindir}/java ]; then
+	update-alternatives --auto java
+fi
+%posttrans devel
+if ! [ -e %{_bindir}/javac ]; then
+	update-alternatives --auto javac
+fi
+%ifnarch x86_64
+%posttrans plugin
+if ! [ -e %{_libdir}/mozilla/plugins/libjavaplugin_oji.so ]; then
+	update-alternatives --auto libjavaplugin_oji.so
+fi
+%endif
+%posttrans fonts
+if ! [ -e %{fontdir}/LucidaBrightDemiBold.ttf ]; then
+	update-alternatives --auto LucidaBrightDemiBold.ttf
 fi
 
 %files -f %{name}-%{version}.files
