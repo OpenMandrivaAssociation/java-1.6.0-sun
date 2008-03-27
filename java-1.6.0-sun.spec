@@ -1,9 +1,9 @@
 %define        origin           sun
 %define        priority         1600
 %define        javaver          1.6.0
-%define        cvsver           6u4
+%define        cvsver           6u5
 %define        over             %{cvsver}
-%define        buildver         04
+%define        buildver         05
 
 %define        cvsversion       %{cvsver}
 
@@ -43,7 +43,7 @@
 
 Name:           java-%{javaver}-%{origin}
 Version:        %{javaver}.%{buildver}
-Release:        %mkrel 1.0.2
+Release:        %mkrel 1
 Summary:        Java Runtime Environment for %{name}
 License:        Operating System Distributor License for Java (DLJ)
 Group:          Development/Java
