@@ -402,7 +402,7 @@ update-alternatives --install %{_bindir}/java java %{jrebindir}/java %{priority}
 --slave %{_mandir}/ja_JP.eucJP/man1/${man}.1%{_extension}        ${man}%{_extension}.ja_JP.eucJP        %{_mandir}/ja_JP.eucJP/man1/${man}-%{name}.1%{_extension}; done)} \
 %ifnarch x86_64
 --slave        %{_bindir}/ControlPanel                        ControlPanel                %{jrebindir}/ControlPanel \
---slave        %{_datadir}/javaws                        javaws                        %{jrebindir}/javaws \
+--slave        %{_bindir}/javaws                        javaws                        %{jrebindir}/javaws \
 %endif
 --slave %{_datadir}/mime/packages/java.xml        java.xml                %{_jvmdir}/%{jrelnk}/lib/sharedmimeinfo \
 --slave        %{_jvmdir}/jre                                jre                        %{_jvmdir}/%{jrelnk} \
