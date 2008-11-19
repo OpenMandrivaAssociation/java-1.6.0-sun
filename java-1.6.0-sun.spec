@@ -372,7 +372,7 @@ cat %{name}-%{version}-all.files \
 %define        jreext        javaws
 %endif
 %define        jrebin        keytool orbd policytool rmid rmiregistry servertool tnameserv
-%define        jreman        java %{jreext} %{jrebin}
+%define        jreman        java %{jreext} %{jrebin} jvisualvm
 %ifarch        x86_64
 %define        jdkext        %{nil}
 %else
