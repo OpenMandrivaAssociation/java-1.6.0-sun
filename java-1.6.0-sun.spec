@@ -1,9 +1,9 @@
 %define        origin           sun
 %define        priority         1600
 %define        javaver          1.6.0
-%define        cvsver           6u10
+%define        cvsver           6u12
 %define        over             %{cvsver}
-%define        buildver         10
+%define        buildver         12
 
 %define        cvsversion       %{cvsver}
 
@@ -30,6 +30,7 @@
 %endif
 %ifarch x86_64
 %define        target_cpu       amd64
+%define pluginname      %{_jvmdir}/%{jredir}/lib/amd64/libjavaplugin_jni.so
 %endif
 
 %define        cgibindir        %{_var}/www/cgi-bin
@@ -39,11 +40,12 @@
 %define _use_internal_dependency_generator 0
 
 # This prevents aggressive stripping.
-%define        debug_package    %{nil}
+%define _enable_debug_packages %{nil}
+%define debug_package          %{nil}
 
 Name:           java-%{javaver}-%{origin}
 Version:        %{javaver}.%{buildver}
-Release:        %mkrel 1
+Release:        %mkrel 0.1
 Summary:        Java Runtime Environment for %{name}
 License:        Operating System Distributor License for Java (DLJ)
 Group:          Development/Java
@@ -66,9 +68,7 @@ Requires(postun): update-alternatives
 Requires:       jpackage-utils >= 0:1.5.38
 ExclusiveArch:  %{ix86} x86_64
 BuildRequires:  jpackage-utils >= 0:1.5.38 sed desktop-file-utils
-%ifnarch x86_64
 Provides:       javaws = %{javaws_ver}
-%endif
 Provides:       jndi = %{version} jndi-ldap = %{version}
 Provides:       jndi-cos = %{version} jndi-rmi = %{version}
 Provides:       jndi-dns = %{version}
@@ -82,9 +82,7 @@ Obsoletes:      javaws-menu
 Provides:       javaws-menu
 %endif
 # DLJ license requires these to be part of the JRE
-%ifnarch x86_64
 Requires:       %{_lib}%{name}-plugin = %{version}-%{release}
-%endif
 Requires:       %{_lib}%{name}-alsa = %{version}-%{release}
 Requires:       %{_lib}%{name}-jdbc = %{version}-%{release}
 Requires:       %{name}-fonts = %{version}-%{release}
@@ -139,7 +137,6 @@ AutoReq:        0
 %description demo
 This package contains demonstration files for %{name}.
 
-%ifnarch x86_64
 %package plugin
 Summary:        Browser plugin files for %{name}
 Group:          Networking/WWW
@@ -155,7 +152,6 @@ Obsoletes:      java-1.3.1-plugin java-1.4.0-plugin java-1.4.1-plugin java-1.4.2
 %description plugin
 This package contains browser plugin files for %{name}.
 Note!  This package supports browsers built with GCC 3.2 and later.
-%endif
 
 %package fonts
 Summary:        TrueType fonts for %{origin} JVMs
@@ -224,17 +220,11 @@ done
 sed -i -e "s#%{jrebindir}#%{sdkbindir}#g" %{name}-jconsole.desktop
 mv %{name}-java.desktop debian/sharedmimeinfo %{jdkbundle}/jre/lib
 
-%ifnarch x86_64
-#sed -i -e "s#PATH=/usr/local/java/bin#PATH=%{jrebindir}#" %{jdkbundle}/bin/java-rmi.cgi
-
-# fix up (create new) HtmlConverter
-#cat >%{jdkbundle}/bin/HtmlConverter << EOF
-#%{jrebindir}/java -jar %{sdklibdir}/htmlconverter.jar $*
-#EOF
-%endif
 
 %install
 rm -rf %{buildroot}
+
+export DONT_STRIP=1
 
 cd %{jdkbundle}
 %ifnarch x86_64
@@ -268,9 +258,7 @@ popd
 
 # rest of the jre
 cp -a jre/bin jre/lib %{buildroot}%{_jvmdir}/%{jredir}
-%ifnarch x86_64
 cp -a jre/javaws jre/plugin %{buildroot}%{_jvmdir}/%{jredir}
-%endif
 install -d %{buildroot}%{_jvmdir}/%{jredir}/lib/endorsed
 
 # jce policy file handling
@@ -293,7 +281,6 @@ ln -s %{sdkdir} %{jrelnk}
 ln -s %{sdkdir} %{sdklnk}
 popd
 
-%ifnarch x86_64
 
 install -m644 jre/plugin/desktop/sun_java.png -D %{buildroot}%{_datadir}/pixmaps/%{name}.png
 
@@ -305,7 +292,6 @@ for desktop in ../*.desktop; do
                                 --add-category="X-MandrivaLinux-System-SunJava%{over}" \
                                 --dir %{buildroot}%{_datadir}/applications $desktop
 done
-%endif
 
 # make sure that this directory exist so update-alternatvies won't fail if shared-mime-info isn't installed
 install -d %{buildroot}%{_datadir}/mime/packages
@@ -350,10 +336,8 @@ find %{buildroot}%{_jvmdir}/%{jredir} -type d \
 find %{buildroot}%{_jvmdir}/%{jredir} -type f -o -type l \
 | sed 's|'%{buildroot}'||'      >> %{name}-%{version}-all.files
 
-%ifnarch x86_64
 grep plugin  %{name}-%{version}-all.files | sort \
 > %{name}-%{version}-plugin.files
-%endif
 grep Jdbc    %{name}-%{version}-all.files | sort \
 > %{name}-%{version}-jdbc.files
 grep -F alsa.so %{name}-%{version}-all.files | sort \
@@ -400,10 +384,8 @@ update-alternatives --install %{_bindir}/java java %{jrebindir}/java %{priority}
 --slave %{_bindir}/${bin}                        ${bin}                        %{jrebindir}/${bin}; done)}%{expand:%(for man in %{jreman}; do echo -n -e \ \\\\\\n\
 --slave %{_mandir}/man1/${man}.1%{_extension}        ${man}.1%{_extension}        %{_mandir}/man1/${man}-%{name}.1%{_extension}; done)}%{expand:%(for man in %{jreman}; do echo -n -e \ \\\\\\n\
 --slave %{_mandir}/ja_JP.eucJP/man1/${man}.1%{_extension}        ${man}%{_extension}.ja_JP.eucJP        %{_mandir}/ja_JP.eucJP/man1/${man}-%{name}.1%{_extension}; done)} \
-%ifnarch x86_64
 --slave        %{_bindir}/ControlPanel                        ControlPanel                %{jrebindir}/ControlPanel \
 --slave        %{_bindir}/javaws                        javaws                        %{jrebindir}/javaws \
-%endif
 --slave %{_datadir}/mime/packages/java.xml        java.xml                %{_jvmdir}/%{jrelnk}/lib/sharedmimeinfo \
 --slave        %{_jvmdir}/jre                                jre                        %{_jvmdir}/%{jrelnk} \
 --slave        %{_jvmjardir}/jre                        jre_exports                %{_jvmjardir}/%{jrelnk}
@@ -430,9 +412,7 @@ update-alternatives --install %{_jvmdir}/jre-%{origin} jre_%{origin} %{_jvmdir}/
 update-alternatives --install %{_jvmdir}/jre-%{javaver} jre_%{javaver} %{_jvmdir}/%{jrelnk} %{priority} \
 --slave %{_jvmjardir}/jre-%{javaver}        jre_%{javaver}_exports      %{_jvmjardir}/%{jrelnk}
 
-%ifnarch x86_64
 %{update_desktop_database}
-%endif
 %{update_mime_database}
 
 %post devel
@@ -449,15 +429,27 @@ update-alternatives --install %{_jvmdir}/java-%{origin} java_sdk_%{origin} %{_jv
 update-alternatives --install %{_jvmdir}/java-%{javaver} java_sdk_%{javaver} %{_jvmdir}/%{sdklnk} %{priority} \
 --slave %{_jvmjardir}/java-%{javaver}        java_sdk_%{javaver}_exports      %{_jvmjardir}/%{sdklnk}
 
-%ifnarch x86_64
+%ifarch %ix86
 %post plugin
 update-alternatives --install %{_libdir}/mozilla/plugins/libjavaplugin_oji.so libjavaplugin_oji.so %{pluginname} %{priority}
+%endif
+
+%ifarch x86_64
+%post plugin
+update-alternatives --install %{_libdir}/mozilla/plugins/libjavaplugin_jni.so libjavaplugin_jni.so %{pluginname} %{priority}
+%endif
+
 
 %postun plugin
 if ! [ -e "%{pluginname}" ]; then
+%ifarch %ix86
 update-alternatives --remove libjavaplugin_oji.so %{pluginname}
-fi
 %endif
+
+%ifarch x86_64
+update-alternatives --remove libjavaplugin_jni.so %{pluginname}
+%endif
+fi
 
 %postun
 if ! [ -e "%{jrebindir}/java" ]; then
@@ -468,9 +460,7 @@ update-alternatives --remove \
 update-alternatives --remove jre_%{origin}  %{_jvmdir}/%{jrelnk}
 update-alternatives --remove jre_%{javaver} %{_jvmdir}/%{jrelnk}
 fi
-%ifnarch x86_64
 %{clean_desktop_database}
-%endif
 %{clean_mime_database}
 
 %postun devel
@@ -514,12 +504,18 @@ fi
 if ! [ -e %{_bindir}/javac ]; then
 	update-alternatives --auto javac
 fi
-%ifnarch x86_64
 %posttrans plugin
+%ifarch %ix86
 if ! [ -e %{_libdir}/mozilla/plugins/libjavaplugin_oji.so ]; then
 	update-alternatives --auto libjavaplugin_oji.so
 fi
 %endif
+%ifarch %ix86
+if ! [ -e %{_libdir}/mozilla/plugins/libjavaplugin_jni.so ]; then
+	update-alternatives --auto libjavaplugin_jni.so
+fi
+%endif
+
 %posttrans fonts
 if ! [ -e %{fontdir}/LucidaBrightDemiBold.ttf ]; then
 	update-alternatives --auto LucidaBrightDemiBold.ttf
@@ -539,19 +535,15 @@ fi
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/cacerts
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/java.policy
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/java.security
-%ifnarch x86_64
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/javaws.policy
-%endif
 %ghost %{_jvmdir}/%{jredir}/lib/security/local_policy.jar
 %ghost %{_jvmdir}/%{jredir}/lib/security/US_export_policy.jar
 %{_jvmdir}/%{jrelnk}
 %{_jvmjardir}/%{jrelnk}
 %{_jvmprivdir}/*
-%ifnarch x86_64
 %{_datadir}/applications/*.desktop
 %exclude %{_datadir}/applications/%{name}-jconsole.desktop
 %{_datadir}/pixmaps/*.png
-%endif
 %dir %{_datadir}/mime
 %dir %{_datadir}/mime/packages
 
@@ -568,8 +560,8 @@ fi
 %{_jvmjardir}/%{sdklnk}
 %ifnarch x86_64
 %{cgibindir}/java-rmi-%{version}.cgi
-%{_datadir}/applications/%{name}-jconsole.desktop
 %endif
+%{_datadir}/applications/%{name}-jconsole.desktop
 
 %files src
 %defattr(-,root,root,-)
@@ -588,12 +580,10 @@ fi
 %files jdbc -f %{name}-%{version}-jdbc.files
 %defattr(-,root,root,-)
 
-%ifnarch x86_64
 %files plugin -f %{name}-%{version}-plugin.files
 %defattr(-,root,root,-)
 %dir %{_libdir}/mozilla
 %dir %{_libdir}/mozilla/plugins
-%endif
 
 %files fonts
 %defattr(0644,root,root,0755)
