@@ -26,11 +26,15 @@
 
 %ifarch %{ix86}
 %define        target_cpu       i586
-%define        pluginname       %{_jvmdir}/%{jredir}/plugin/i386/ns7/libjavaplugin_oji.so
+%define        pluginname       %{_jvmdir}/%{jredir}/lib/i386/libnpjp2.so
+%define        oldpluginname    %{_jvmdir}/%{jredir}/plugin/i386/ns7/libjavaplugin_oji.so
+%define        priority2        1590
+%define        javaplugin       libjavaplugin.so
 %endif
 %ifarch x86_64
 %define        target_cpu       amd64
-%define pluginname      %{_jvmdir}/%{jredir}/lib/amd64/libjavaplugin_jni.so
+%define        pluginname       %{_jvmdir}/%{jredir}/lib/amd64/libnpjp2.so
+%define        javaplugin       libjavaplugin.so.%{_arch}
 %endif
 
 %define        cgibindir        %{_var}/www/cgi-bin
@@ -45,7 +49,7 @@
 
 Name:           java-%{javaver}-%{origin}
 Version:        %{javaver}.%{buildver}
-Release:        %mkrel 0.1
+Release:        %mkrel 0.2
 Summary:        Java Runtime Environment for %{name}
 License:        Operating System Distributor License for Java (DLJ)
 Group:          Development/Java
@@ -220,7 +224,6 @@ done
 sed -i -e "s#%{jrebindir}#%{sdkbindir}#g" %{name}-jconsole.desktop
 mv %{name}-java.desktop debian/sharedmimeinfo %{jdkbundle}/jre/lib
 
-
 %install
 rm -rf %{buildroot}
 
@@ -281,7 +284,6 @@ ln -s %{sdkdir} %{jrelnk}
 ln -s %{sdkdir} %{sdklnk}
 popd
 
-
 install -m644 jre/plugin/desktop/sun_java.png -D %{buildroot}%{_datadir}/pixmaps/%{name}.png
 
 for desktop in ../*.desktop; do
@@ -336,7 +338,7 @@ find %{buildroot}%{_jvmdir}/%{jredir} -type d \
 find %{buildroot}%{_jvmdir}/%{jredir} -type f -o -type l \
 | sed 's|'%{buildroot}'||'      >> %{name}-%{version}-all.files
 
-grep plugin  %{name}-%{version}-all.files | sort \
+grep "plugin\|libnpjp2"  %{name}-%{version}-all.files | sort \
 > %{name}-%{version}-plugin.files
 grep Jdbc    %{name}-%{version}-all.files | sort \
 > %{name}-%{version}-jdbc.files
@@ -344,6 +346,7 @@ grep -F alsa.so %{name}-%{version}-all.files | sort \
 > %{name}-%{version}-alsa.files
 cat %{name}-%{version}-all.files \
 | grep -v plugin \
+| grep -v libnpjp2 \
 | grep -v Jdbc \
 | grep -v lib/fonts \
 | grep -vF alsa.so \
@@ -412,6 +415,7 @@ update-alternatives --install %{_jvmdir}/jre-%{origin} jre_%{origin} %{_jvmdir}/
 update-alternatives --install %{_jvmdir}/jre-%{javaver} jre_%{javaver} %{_jvmdir}/%{jrelnk} %{priority} \
 --slave %{_jvmjardir}/jre-%{javaver}        jre_%{javaver}_exports      %{_jvmjardir}/%{jrelnk}
 
+
 %{update_desktop_database}
 %{update_mime_database}
 
@@ -429,26 +433,24 @@ update-alternatives --install %{_jvmdir}/java-%{origin} java_sdk_%{origin} %{_jv
 update-alternatives --install %{_jvmdir}/java-%{javaver} java_sdk_%{javaver} %{_jvmdir}/%{sdklnk} %{priority} \
 --slave %{_jvmjardir}/java-%{javaver}        java_sdk_%{javaver}_exports      %{_jvmjardir}/%{sdklnk}
 
-%ifarch %ix86
 %post plugin
-update-alternatives --install %{_libdir}/mozilla/plugins/libjavaplugin_oji.so libjavaplugin_oji.so %{pluginname} %{priority}
+%ifarch %ix86
+update-alternatives --install %{_libdir}/mozilla/plugins/libjavaplugin.so %{javaplugin} %{pluginname} %{priority}
+update-alternatives --install %{_libdir}/mozilla/plugins/libjavaplugin.so %{javaplugin} %{oldpluginname} %{priority2}
 %endif
 
 %ifarch x86_64
-%post plugin
-update-alternatives --install %{_libdir}/mozilla/plugins/libjavaplugin_jni.so libjavaplugin_jni.so %{pluginname} %{priority}
+update-alternatives --install %{_libdir}/mozilla/plugins/libjavaplugin.so %{javaplugin} %{pluginname} %{priority}
 %endif
-
 
 %postun plugin
-if ! [ -e "%{pluginname}" ]; then
 %ifarch %ix86
-update-alternatives --remove libjavaplugin_oji.so %{pluginname}
+if ! [ -e "%{oldpluginname}" ]; then
+update-alternatives --remove %{javaplugin} %{oldpluginname}
+fi
 %endif
-
-%ifarch x86_64
-update-alternatives --remove libjavaplugin_jni.so %{pluginname}
-%endif
+if ! [ -e "%{pluginname}" ]; then
+update-alternatives --remove %{javaplugin} %{pluginname}
 fi
 
 %postun
@@ -460,6 +462,7 @@ update-alternatives --remove \
 update-alternatives --remove jre_%{origin}  %{_jvmdir}/%{jrelnk}
 update-alternatives --remove jre_%{javaver} %{_jvmdir}/%{jrelnk}
 fi
+
 %{clean_desktop_database}
 %{clean_mime_database}
 
@@ -505,16 +508,9 @@ if ! [ -e %{_bindir}/javac ]; then
 	update-alternatives --auto javac
 fi
 %posttrans plugin
-%ifarch %ix86
-if ! [ -e %{_libdir}/mozilla/plugins/libjavaplugin_oji.so ]; then
-	update-alternatives --auto libjavaplugin_oji.so
+if ! [ -e %{_libdir}/mozilla/plugins/libjavaplugin.so ]; then
+	update-alternatives --auto %{javaplugin}
 fi
-%endif
-%ifarch %ix86
-if ! [ -e %{_libdir}/mozilla/plugins/libjavaplugin_jni.so ]; then
-	update-alternatives --auto libjavaplugin_jni.so
-fi
-%endif
 
 %posttrans fonts
 if ! [ -e %{fontdir}/LucidaBrightDemiBold.ttf ]; then
