@@ -545,6 +545,7 @@ fi
 %{_datadir}/pixmaps/*.png
 %dir %{_datadir}/mime
 %dir %{_datadir}/mime/packages
+%{_jvmdir}/%{jredir}/lib/security/blacklist
 
 %files devel -f %{name}-%{version}-devel.files
 %defattr(-,root,root,-)
