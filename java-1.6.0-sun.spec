@@ -52,7 +52,7 @@ Version:        %{javaver}.%{buildver}
 %if %mdkversion < 201000
 %define subrel  1
 %endif
-Release:        %mkrel 1
+Release:        %mkrel 0
 Summary:        Java Runtime Environment for %{name}
 License:        Operating System Distributor License for Java (DLJ)
 Group:          Development/Java
