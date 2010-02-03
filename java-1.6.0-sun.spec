@@ -1,16 +1,16 @@
 %define        origin           sun
 %define        priority         1600
 %define        javaver          1.6.0
-%define        cvsver           6u16
+%define        cvsver           6u18
 %define        over             %{cvsver}
-%define        buildver         16
+%define        buildver         18
 
 %define        cvsversion       %{cvsver}
 
 %define        javaws_ver       %{javaver}
 %define        javaws_version   %{cvsversion}
 
-%define        ubuntu_svnrev    r273
+%define        ubuntu_svnrev    r361
 
 %define        jdkbundle        jdk%{javaver}_%{buildver}
 %define        sdklnk           java-%{javaver}-%{origin}
@@ -52,7 +52,7 @@ Version:        %{javaver}.%{buildver}
 %if %mdkversion < 201000
 %define subrel  1
 %endif
-Release:        %mkrel 2
+Release:        %mkrel 1
 Summary:        Java Runtime Environment for %{name}
 License:        Operating System Distributor License for Java (DLJ)
 Group:          Development/Java
