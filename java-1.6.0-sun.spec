@@ -1,9 +1,9 @@
 %define        origin           sun
 %define        priority         1600
 %define        javaver          1.6.0
-%define        cvsver           6u18
+%define        cvsver           6u19
 %define        over             %{cvsver}
-%define        buildver         18
+%define        buildver         19
 
 %define        cvsversion       %{cvsver}
 
@@ -46,13 +46,20 @@
 # This prevents aggressive stripping.
 %define _enable_debug_packages %{nil}
 %define debug_package          %{nil}
+%define __debug_install_post   /bin/true %{nil}
+
+%if %mandriva_branch == Cooker
+# Cooker
+%define release %mkrel 1
+%else
+# Old distros
+%define subrel 1
+%define release %mkrel 0
+%endif 
 
 Name:           java-%{javaver}-%{origin}
 Version:        %{javaver}.%{buildver}
-%if %mdkversion < 201000
-%define subrel  1
-%endif
-Release:        %mkrel 1
+Release:        %{release}
 Summary:        Java Runtime Environment for %{name}
 License:        Operating System Distributor License for Java (DLJ)
 Group:          Development/Java
@@ -167,6 +174,10 @@ Requires(post): update-alternatives
 Requires(postun): update-alternatives
 Requires:       %{name} = %{version}-%{release} freetype-tools
 Requires:       mkfontdir
+%if %mdkversion <= 201000
+Requires(post): fontconfig
+Requires(postun): fontconfig
+%endif
 Provides:       java-fonts = %{javaver} java-%{javaver}-fonts
 Conflicts:      java-%{javaver}-ibm-fonts java-%{javaver}-blackdown-fonts
 Conflicts:      java-%{javaver}-bea-fonts
@@ -339,7 +350,7 @@ find %{buildroot}%{_jvmdir}/%{jredir} -type d \
 find %{buildroot}%{_jvmdir}/%{jredir} -type f -o -type l \
 | sed 's|'%{buildroot}'||'      >> %{name}-%{version}-all.files
 
-grep "plugin\|libnpjp2"  %{name}-%{version}-all.files | sort \
+grep "plugin\|libnpjp2\|lib/locale"  %{name}-%{version}-all.files | sort \
 > %{name}-%{version}-plugin.files
 grep Jdbc    %{name}-%{version}-all.files | sort \
 > %{name}-%{version}-jdbc.files
@@ -350,6 +361,8 @@ cat %{name}-%{version}-all.files \
 | grep -v libnpjp2 \
 | grep -v Jdbc \
 | grep -v lib/fonts \
+| grep -v lib/oblique-fonts \
+| grep -v lib/locale \
 | grep -vF alsa.so \
 | grep -v jre/lib/security \
 > %{name}-%{version}.files
@@ -484,9 +497,16 @@ update-alternatives --install %{fontdir}/LucidaBrightDemiBold.ttf LucidaBrightDe
 mkfontscale %{fontdir}
 mkfontdir %{fontdir}
 
+%if %mdkversion <= 201000
+fc-cache
+%endif
+
 %postun fonts
 if ! [ -e %{_jvmdir}/%{jredir}/lib/fonts/LucidaBrightDemiBold.ttf ]; then
 update-alternatives --remove LucidaBrightDemiBold.ttf %{_jvmdir}/%{jredir}/lib/fonts/LucidaBrightDemiBold.ttf
+%if %mdkversion <= 201000
+fc-cache
+%endif
 fi
 
 if [ -d %{fontdir} ]; then
@@ -525,7 +545,6 @@ fi
 %{_jvmdir}/%{sdkdir}/LICENSE
 %{_jvmdir}/%{sdkdir}/THIRDPARTYLICENSEREADME.txt
 %{jvmjardir}
-%{_jvmdir}/%{jredir}/lib/fonts
 %dir %{_jvmdir}/%{jredir}/lib/security
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/cacerts
 %config(noreplace) %{_jvmdir}/%{jredir}/lib/security/java.policy
@@ -542,6 +561,7 @@ fi
 %dir %{_datadir}/mime
 %dir %{_datadir}/mime/packages
 %{_jvmdir}/%{jredir}/lib/security/blacklist
+%{_jvmdir}/%{jredir}/lib/security/trusted.libraries
 
 %files devel -f %{name}-%{version}-devel.files
 %defattr(-,root,root,-)
@@ -583,7 +603,8 @@ fi
 
 %files fonts
 %defattr(0644,root,root,0755)
-%{_jvmdir}/%{jredir}/lib/fonts/*.ttf
+%{_jvmdir}/%{jredir}/lib/fonts
+%{_jvmdir}/%{jredir}/lib/oblique-fonts
 %dir %{fontdir}
 %config(noreplace) %{fontdir}/fonts.alias
 %ghost %{fontdir}/fonts.dir
