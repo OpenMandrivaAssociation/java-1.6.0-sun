@@ -1,9 +1,9 @@
 %define        origin           sun
 %define        priority         1600
 %define        javaver          1.6.0
-%define        cvsver           6u19
+%define        cvsver           6u20
 %define        over             %{cvsver}
-%define        buildver         19
+%define        buildver         20
 
 %define        cvsversion       %{cvsver}
 
