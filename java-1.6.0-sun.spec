@@ -1,9 +1,9 @@
 %define        origin           sun
 %define        priority         1600
 %define        javaver          1.6.0
-%define        cvsver           6u20
+%define        cvsver           6u21
 %define        over             %{cvsver}
-%define        buildver         20
+%define        buildver         21
 
 %define        cvsversion       %{cvsver}
 
@@ -107,7 +107,7 @@ Obsoletes:      jre2 < %{version}-%{release}
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %description
-This package contains the Java Runtime Environment for %{name}
+This package contains the Java Runtime Environment for %{name}.
 
 %package devel
 Summary:        Java Development Kit for %{name}
