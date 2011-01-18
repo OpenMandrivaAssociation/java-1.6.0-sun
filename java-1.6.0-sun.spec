@@ -1,9 +1,9 @@
 %define        origin           sun
 %define        priority         1600
 %define        javaver          1.6.0
-%define        cvsver           6u22
+%define        cvsver           6u23
 %define        over             %{cvsver}
-%define        buildver         22
+%define        buildver         23
 
 %define        cvsversion       %{cvsver}
 
@@ -53,7 +53,7 @@
 %define release %mkrel 1
 %else
 # Old distros
-%define subrel 4
+%define subrel 1
 %define release %mkrel 0
 %endif 
 
