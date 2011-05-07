@@ -50,7 +50,7 @@
 
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 1
+%define release %mkrel 2
 %else
 # Old distros
 %define subrel 1
@@ -393,6 +393,10 @@ echo %{_mandir}/man1/${man}-%{name}.1%{_extension} >> %{name}-%{version}-devel.f
 echo %{_mandir}/ja_JP.eucJP/man1/${man}-%{name}.1%{_extension} >> %{name}-%{version}-devel.files
 done
 
+# (eugeni) allow banco do brasil applet to work on 64bits architecture
+mkdir -p %{buildroot}%_sysconfdir/.java/.systemPrefs
+chmod 755 %{buildroot}%_sysconfdir/.java/.systemPrefs
+
 %clean
 rm -rf %{buildroot}
 
@@ -600,6 +604,7 @@ fi
 %defattr(-,root,root,-)
 %dir %{_libdir}/mozilla
 %dir %{_libdir}/mozilla/plugins
+%dir %{_sysconfdir}/.java/.systemPrefs
 
 %files fonts
 %defattr(0644,root,root,0755)
