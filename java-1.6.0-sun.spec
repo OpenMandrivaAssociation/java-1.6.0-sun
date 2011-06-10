@@ -1,9 +1,9 @@
 %define        origin           sun
 %define        priority         1600
 %define        javaver          1.6.0
-%define        cvsver           6u25
+%define        cvsver           6u26
 %define        over             %{cvsver}
-%define        buildver         25
+%define        buildver         26
 
 %define        cvsversion       %{cvsver}
 
@@ -50,7 +50,7 @@
 
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 2
+%define release %mkrel 1
 %else
 # Old distros
 %define subrel 1
