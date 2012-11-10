@@ -1,0 +1,26 @@
+Index: debian/JB-javaws_viewer.desktop.in
+===================================================================
+--- debian/JB-javaws_viewer.desktop.in	(Revision 0)
++++ debian/JB-javaws_viewer.desktop.in	(Revision 0)
+@@ -0,0 +1,9 @@
++[Desktop Entry]
++Encoding=UTF-8
++Name=@vendor@ Java @RELEASE@ Cache Viewer@ia32txt@
++Comment=@vendor@ Java @RELEASE@ Cache Viewer@ia32txt@
++Exec=/@basedir@/bin/javaws -viewer
++Terminal=false
++Type=Application
++Icon=/usr/share/icons/@basename@.xpm
++Categories=Application;Network;
+Index: debian/JB-javaws.desktop.in
+===================================================================
+--- debian/JB-javaws.desktop.in	(Revision 361)
++++ debian/JB-javaws.desktop.in	(Arbeitskopie)
+@@ -5,6 +5,7 @@
+ Exec=/@basedir@/bin/javaws %u
+ Terminal=false
+ Type=Application
++NoDisplay=true
+ Icon=@basename@
+ Categories=Application;Network;
+ MimeType=application/x-java-jnlp-file;
