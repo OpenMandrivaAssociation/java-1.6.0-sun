@@ -50,7 +50,7 @@
 
 %if %mandriva_branch == Cooker
 # Cooker
-%define release %mkrel 1
+%define release %mkrel 2
 %else
 # Old distros
 %define subrel 1
@@ -237,7 +237,6 @@ sed -i -e "s#%{jrebindir}#%{sdkbindir}#g" %{name}-jconsole.desktop
 mv %{name}-java.desktop debian/sharedmimeinfo %{jdkbundle}/jre/lib
 
 %install
-rm -rf %{buildroot}
 
 export DONT_STRIP=1
 
@@ -396,9 +395,6 @@ done
 # (eugeni) allow banco do brasil applet to work on 64bits architecture
 mkdir -p %{buildroot}%_sysconfdir/.java/.systemPrefs
 chmod 755 %{buildroot}%_sysconfdir/.java/.systemPrefs
-
-%clean
-rm -rf %{buildroot}
 
 %post
 update-alternatives --install %{_bindir}/java java %{jrebindir}/java %{priority}%{expand:%(for bin in %{jrebin}; do echo -n -e \ \\\\\\n\
